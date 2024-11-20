@@ -4,13 +4,18 @@ import { getPostAPI } from "../../api/post/post"; // API 함수 임포트
 import PostContent from "../../components/PostContent"; // 자식 컴포넌트 임포트
 import { DataProps, StringToArrayProps } from "../../types";
 import { getPostsAPI } from "../../api/post";
+import PostList from "../../components/PostList";
 
-interface PostListProps {
-  searchParams?: { postsPerPage?: string };
+export interface PostListProps {
+  searchParams?: { postsPerPage?: string; page?: string };
+}
+
+interface PostProps extends PostListProps {
+  params: { id: string }
 }
 
 // 페이지 컴포넌트는 서버 컴포넌트로, 데이터를 서버에서 바로 가져옵니다.
-export default async function Post({ params }: { params: { id: string } }) {
+export default async function Post({ params, searchParams }: PostProps) {
   const { id } = params;
 
   // 서버에서 데이터 직접 가져오기
@@ -33,6 +38,7 @@ export default async function Post({ params }: { params: { id: string } }) {
     <div className="max-w-3xl mx-auto p-6">
       {/* 자식 컴포넌트에 데이터 전달 */}
       <PostContent post={stringToArraytoObject} />
+      <PostList searchParams={searchParams} />
     </div>
   );
 }
@@ -43,8 +49,7 @@ export async function generateStaticParams({ searchParams }: PostListProps) {
   const posts = await getPostsAPI(1, postsPerPage);
 
   // 각 게시글의 ID를 기반으로 동적 경로를 생성
-  return posts.map((post) => ({
+  return posts.map((post: DataProps) => ({
     id: post.id.toString(), // 동적 경로에서 사용되는 파라미터
   }));
 }
-

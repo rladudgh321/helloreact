@@ -1,8 +1,5 @@
 // components/PostContent.tsx
-"use client";
-
 import { StringToArrayProps } from "../types";
-
 // 클라이언트 컴포넌트로 정의
 interface PostContentProps {
   post: StringToArrayProps; // 부모로부터 전달된 게시글 데이터
@@ -12,7 +9,9 @@ export default function PostContent({ post }: PostContentProps) {
   return (
     <div>
       {/* 게시글 제목 */}
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-4">{post.title}</h1>
+      <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+        <div>{post.title}</div>
+      </h1>
 
       {/* 태그들 */}
       <div className="flex space-x-3 mb-8">

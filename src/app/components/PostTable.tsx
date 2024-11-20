@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getPostsAPI } from '../api/post';
-import Link from 'next/link';
-import { DataProps, StringToArrayProps } from '../types';
-
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation"; // 쿼리 파라미터를 관리하는 훅
+import { getPostsAPI } from "../api/post";
+import Link from "next/link";
+import { DataProps, StringToArrayProps } from "../types";
 
 function formatDate(date: Date) {
   const year = date.getFullYear(); // 연도 (4자리)
-  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월 (2자리, 1부터 시작하므로 +1)
-  const day = date.getDate().toString().padStart(2, '0'); // 일 (2자리)
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월 (2자리, 1부터 시작하므로 +1)
+  const day = date.getDate().toString().padStart(2, "0"); // 일 (2자리)
 
   return `${year}.${month}.${day}.`; // 원하는 형식으로 반환
 }
@@ -22,21 +22,31 @@ export default function PostTable({
   initialPosts: DataProps[];
   postsPerPage: number;
 }) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const searchParams = useSearchParams(); // URL의 쿼리 파라미터를 가져옴
+  const currentPageFromURL = searchParams.get("page"); // URL에서 현재 페이지 번호를 가져옴
+  const initialPage = currentPageFromURL ? parseInt(currentPageFromURL) : 1; // 페이지 번호를 가져오고 기본값 1 설정
+  const [currentPage, setCurrentPage] = useState(initialPage);
 
   const { isPending, error, data } = useQuery({
-    queryKey: ['postList', currentPage],
+    queryKey: ["postList", currentPage],
     queryFn: () => getPostsAPI(currentPage, postsPerPage),
-    initialData: initialPosts // 최초 데이터는 서버에서 받은 데이터 사용
-  })
+    initialData: initialPosts, // 최초 데이터는 서버에서 받은 데이터 사용
+  });
 
-  if (isPending) return 'Loading...';
+  useEffect(() => {
+    // URL의 쿼리 파라미터에 현재 페이지 상태를 반영
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", currentPage.toString());
+    window.history.replaceState({}, "", url.toString()); // URL을 업데이트
+  }, [currentPage]);
+
+  if (isPending) return "Loading...";
   if (error) return `An error occurred: ${error.message}`;
 
   const stringToArray: StringToArrayProps[] = data.map((item: DataProps) => ({
     ...item,
-    images: item.images.split(','),
-    tags: item.tags.split(','),
+    images: item.images.split(","),
+    tags: item.tags.split(","),
   }));
 
   const indexOfLastPost = currentPage * postsPerPage;
@@ -63,15 +73,23 @@ export default function PostTable({
         <tbody>
           {currentPosts.map((post, index) => (
             <tr key={post.id} className="border-b hover:bg-gray-50">
-              <td className="py-2 px-4">{index + 1 + (currentPage - 1) * postsPerPage}</td>
               <td className="py-2 px-4">
-                <Link href={`/post/${post.id}`} className="text-blue-600 hover:text-blue-800">
+                {index + 1 + (currentPage - 1) * postsPerPage}
+              </td>
+              <td className="py-2 px-4">
+                <Link
+                  href={`/post/${post.id}?page=${currentPage}`}
+                  className="text-blue-600 hover:text-blue-800"
+                >
                   {post.title}
                 </Link>
               </td>
               <td className="py-2 px-4">
                 {post.tags.map((tag, idx) => (
-                  <span key={idx} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2">
+                  <span
+                    key={idx}
+                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -97,7 +115,9 @@ export default function PostTable({
           <button
             key={index}
             className={`px-4 py-2 border rounded-md mx-2 ${
-              currentPage === startPage + index ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              currentPage === startPage + index
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 hover:bg-gray-300"
             }`}
             onClick={() => paginate(startPage + index)}
           >
