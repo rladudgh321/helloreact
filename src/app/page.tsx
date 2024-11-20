@@ -1,57 +1,15 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getPostsAPI } from './api/post';
-
-// 게시글 목록 (예시 데이터, 25개로 가정)
-const posts = [
-  { id: 1, title: '첫 번째 게시글', tags: ['React', 'Next.js'], date: '2024-11-01' },
-  { id: 2, title: '두 번째 게시글', tags: ['JavaScript', 'Node.js'], date: '2024-11-05' },
-  { id: 3, title: '세 번째 게시글', tags: ['CSS', 'Tailwind CSS'], date: '2024-11-10' },
-  { id: 4, title: '네 번째 게시글', tags: ['HTML', 'Web Development'], date: '2024-11-12' },
-  { id: 5, title: '다섯 번째 게시글', tags: ['React', 'Web Design'], date: '2024-11-15' },
-  { id: 6, title: '여섯 번째 게시글', tags: ['JavaScript'], date: '2024-11-20' },
-  { id: 7, title: '일곱 번째 게시글', tags: ['Next.js', 'React'], date: '2024-11-22' },
-  { id: 8, title: '여덟 번째 게시글', tags: ['Node.js'], date: '2024-11-25' },
-  { id: 9, title: '아홉 번째 게시글', tags: ['Web Development'], date: '2024-11-28' },
-  { id: 10, title: '열 번째 게시글', tags: ['React', 'Node.js'], date: '2024-11-30' },
-  { id: 11, title: '열한 번째 게시글', tags: ['CSS'], date: '2024-12-01' },
-  { id: 12, title: '열두 번째 게시글', tags: ['HTML'], date: '2024-12-02' },
-  { id: 13, title: '열세 번째 게시글', tags: ['Web Design'], date: '2024-12-05' },
-  { id: 14, title: '열네 번째 게시글', tags: ['JavaScript'], date: '2024-12-07' },
-  { id: 15, title: '열다섯 번째 게시글', tags: ['Tailwind CSS'], date: '2024-12-10' },
-  { id: 16, title: '열여섯 번째 게시글', tags: ['React', 'Next.js'], date: '2024-12-12' },
-  { id: 17, title: '열일곱 번째 게시글', tags: ['Node.js'], date: '2024-12-15' },
-  { id: 18, title: '열여덟 번째 게시글', tags: ['Web Development'], date: '2024-12-18' },
-  { id: 19, title: '열아홉 번째 게시글', tags: ['CSS'], date: '2024-12-20' },
-  { id: 20, title: '스무 번째 게시글', tags: ['JavaScript', 'Next.js'], date: '2024-12-22' },
-  { id: 21, title: '스물한 번째 게시글', tags: ['React'], date: '2024-12-24' },
-  { id: 22, title: '스물두 번째 게시글', tags: ['Tailwind CSS'], date: '2024-12-26' },
-  { id: 23, title: '스물세 번째 게시글', tags: ['Node.js'], date: '2024-12-28' },
-  { id: 24, title: '스물네 번째 게시글', tags: ['Next.js'], date: '2024-12-30' },
-  { id: 25, title: '스물다섯 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  // 추가 게시글
-  { id: 26, title: '스물여섯 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  { id: 27, title: '스물일곱 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  { id: 28, title: '스물여덟 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  { id: 29, title: '스물아홉 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  { id: 30, title: '서른 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  { id: 31, title: '서른한 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-  { id: 32, title: '서른둘 번째 게시글', tags: ['Web Design'], date: '2024-12-31' },
-];
-
-
 
 export default function Home() {
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: getPostsAPI,
   });
-
-  
-
 
   interface dataProps {
     id: number;
@@ -66,26 +24,32 @@ export default function Home() {
     tags: string[];
   }
 
-
-  
-
-
-
-
-
   // 현재 페이지 상태
   const [currentPage, setCurrentPage] = useState(1);
 
+  if (isPending) return 'Loading...'
+
+  if (error) return 'An error has occurred: ' + error.message
+
+  const stringToArray: stringToArrayProps[] = data.map((item: dataProps) => ({
+    ...item,  // 기존 속성 유지
+    images: item.images.split(','),  // images를 쉼표로 분리하여 배열로 변환
+    tags: item.tags.split(',')       // tags를 쉼표로 분리하여 배열로 변환
+  }));
+
+  console.log('stringToArray', stringToArray);
+
+
   // 페이지당 보여줄 게시글 수
-  const postsPerPage = 10;
+  const postsPerPage = 3;
 
   // 현재 페이지에 해당하는 게시글을 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = stringToArray.slice(indexOfFirstPost, indexOfLastPost);
 
   // 페이지네이션 처리
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+  const totalPages = Math.ceil(stringToArray.length / postsPerPage);
 
   // 페이지 그룹 범위 (1~10, 11~20, 21~30 ...)
   const pageGroup = Math.ceil(currentPage / 10);
@@ -95,18 +59,7 @@ export default function Home() {
   // 페이지 번호 클릭 시 페이지 변경
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  if (isPending) return 'Loading...'
-
-  if (error) return 'An error has occurred: ' + error.message
-
-  const stringToArray: stringToArrayProps = data.map((item: dataProps) => ({
-    ...item,  // 기존 속성 유지
-    images: item.images.split(','),  // images를 쉼표로 분리하여 배열로 변환
-    tags: item.tags.split(',')       // tags를 쉼표로 분리하여 배열로 변환
-  }));
-
-  console.log('stringToArray', stringToArray);
-
+  
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">게시판</h1>
