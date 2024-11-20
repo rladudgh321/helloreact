@@ -1,83 +1,50 @@
-// pages/post/[id].js
-// import { useParams } from 'next/navigation';
+// app/post/[id]/page.tsx
+import { notFound } from "next/navigation"; // 404 페이지를 위한 Next.js 내장 함수
+import { getPostAPI } from "../../api/post/post"; // API 함수 임포트
+import PostContent from "../../components/PostContent"; // 자식 컴포넌트 임포트
+import { DataProps, StringToArrayProps } from "../../types";
+import { getPostsAPI } from "../../api/post";
 
-// 예시 데이터 (하드코딩)
-const posts = [
-  { id: 1, title: '첫 번째 게시글', tags: ['React', 'Next.js'] },
-  { id: 2, title: '두 번째 게시글', tags: ['JavaScript', 'Node.js'] },
-  { id: 3, title: '세 번째 게시글', tags: ['CSS', 'Tailwind CSS'] },
-  { id: 4, title: '네 번째 게시글', tags: ['HTML', 'Web Development'] },
-  { id: 5, title: '다섯 번째 게시글', tags: ['React', 'Web Design'] },
-];
+interface PostListProps {
+  searchParams?: { postsPerPage?: string };
+}
 
-interface PostProps { params: { id: string }, searchParams: {} }
-export default function Post({params}: PostProps) {
+// 페이지 컴포넌트는 서버 컴포넌트로, 데이터를 서버에서 바로 가져옵니다.
+export default async function Post({ params }: { params: { id: string } }) {
   const { id } = params;
-  // 게시글 찾기
-  const post = posts.find(post => post.id === parseInt(id));
 
-  if (!post) {
-    return <div>게시글을 찾을 수 없습니다.</div>;
+  // 서버에서 데이터 직접 가져오기
+  const data = await getPostAPI(Number(id));
+
+  // 데이터가 없으면 404 페이지로 리디렉션
+  if (!data) {
+    notFound();
   }
 
+  // 데이터 가공: 이미지와 태그를 배열로 변환
+  const stringToArraytoObject: StringToArrayProps = data.map((item: DataProps) => ({
+    ...item,
+    images: item.images.split(','),
+    tags: item.tags.split(','),
+  }))[0];
+
+  // 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달
   return (
     <div className="max-w-3xl mx-auto p-6">
-    {/* 게시글 제목 */}
-    <h1 className="text-4xl font-extrabold text-gray-900 mb-4">{post.title}</h1>
-    
-    {/* 태그들 */}
-    <div className="flex space-x-3 mb-8">
-      {post.tags.map((tag, idx) => (
-        <span key={idx} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
-          {tag}
-        </span>
-      ))}
+      {/* 자식 컴포넌트에 데이터 전달 */}
+      <PostContent post={stringToArraytoObject} />
     </div>
-
-    {/* 게시글 내용 및 이미지들 */}
-    <div className="space-y-8">
-      {/* 첫 번째 이미지 */}
-      <div className="bg-gray-200 rounded-lg overflow-hidden shadow-md mb-6">
-        <img
-          className="w-full h-96 object-cover"
-          src="https://cdn.pixabay.com/photo/2024/11/07/18/01/spoonbill-9181508_1280.jpg"
-          alt="spoonbill"
-        />
-      </div>
-
-      {/* 두 번째 이미지 */}
-      <div className="bg-gray-200 rounded-lg overflow-hidden shadow-md">
-        <img
-          className="w-full h-96 object-cover"
-          src="https://cdn.pixabay.com/photo/2024/11/05/07/09/elephants-9175178_1280.jpg"
-          alt="elephants"
-        />
-      </div>
-
-      <div className="bg-gray-200 rounded-lg overflow-hidden shadow-md">
-        <img
-          className="w-full h-96 object-cover"
-          src="https://cdn.pixabay.com/photo/2024/11/05/07/09/elephants-9175178_1280.jpg"
-          alt="elephants"
-        />
-      </div>
-
-      <div className="bg-gray-200 rounded-lg overflow-hidden shadow-md">
-        <img
-          className="w-full h-96 object-cover"
-          src="https://cdn.pixabay.com/photo/2024/11/05/07/09/elephants-9175178_1280.jpg"
-          alt="elephants"
-        />
-      </div>
-
-    </div>
-
-    {/* 게시글 내용 추가 */}
-    <div className="mt-8 text-gray-700 leading-relaxed text-lg">
-      <p>
-        이 게시글은 예시 데이터로, 실제 내용은 다른 정보를 담고 있습니다. 각 게시글에 대한 더 많은 내용이나 추가적인 이미지를 넣을 수 있습니다.
-      </p>
-    </div>
-  </div>
   );
 }
+
+export async function generateStaticParams({ searchParams }: PostListProps) {
+  // API 호출하여 게시글 목록 가져오기
+  const postsPerPage = searchParams?.postsPerPage ? parseInt(searchParams.postsPerPage) : 10; // 기본값 10
+  const posts = await getPostsAPI(1, postsPerPage);
+
+  // 각 게시글의 ID를 기반으로 동적 경로를 생성
+  return posts.map((post) => ({
+    id: post.id.toString(), // 동적 경로에서 사용되는 파라미터
+  }));
+}
+

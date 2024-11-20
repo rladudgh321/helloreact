@@ -14,9 +14,7 @@
 
 import { connectToDatabase } from '../lib';
 
-export const GET = async (req: Request) => {
-  // const { page = 1, postsPerPage = 3 } = req.url.searchParams;
-  console.log('url', req.url);
+export const GET = async () => {
   const connection = await connectToDatabase();
   try {
     const query = `SELECT 
