@@ -49,7 +49,7 @@ export async function generateStaticParams({ searchParams }: PostListProps) {
   const posts = await getPostsAPI(1, postsPerPage);
 
   // 각 게시글의 ID를 기반으로 동적 경로를 생성
-  return posts.map((post: DataProps) => ({
+  return posts.posts.map((post: DataProps) => ({
     id: post.id.toString(), // 동적 경로에서 사용되는 파라미터
   }));
 }
