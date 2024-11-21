@@ -5,6 +5,7 @@ export const GET = async (req: Request) => {
   const url = new URL(req.url);
   const page = Number(url.searchParams.get('page')) || 1;
   const postsPerPage = Number(url.searchParams.get('postsPerPage')) || 10;
+  const tag = url.searchParams.get('tag') || ''; // tag 파라미터 처리
 
   const offset = (page - 1) * postsPerPage;
 
@@ -12,9 +13,9 @@ export const GET = async (req: Request) => {
 
   try {
     // 1. 전체 게시물 수를 구하는 쿼리
-    const countQuery = `SELECT COUNT(*) AS totalCount FROM posts`;
+    const countQuery = `SELECT COUNT(*) AS totalCount FROM posts WHERE ? = '' OR id IN (SELECT post_id FROM post_tags pt JOIN tags t ON pt.tag_id = t.id WHERE t.name LIKE ?)`
     const countResult = await new Promise<any>((resolve, reject) => {
-      connection.query(countQuery, (err: any, results: any) => {
+      connection.query(countQuery, [tag, `%${tag}%`], (err: any, results: any) => {
         if (err) {
           reject(err);
         } else {
@@ -36,12 +37,13 @@ export const GET = async (req: Request) => {
       LEFT JOIN post_tags pt ON p.id = pt.post_id
       LEFT JOIN tags t ON pt.tag_id = t.id
       LEFT JOIN images i ON p.id = i.postId
+      WHERE ? = '' OR t.name LIKE ?
       GROUP BY p.id
       LIMIT ? OFFSET ?
     `;
 
     const rows = await new Promise<any>((resolve, reject) => {
-      connection.query(query, [postsPerPage, offset], (err: any, results: any) => {
+      connection.query(query, [tag, `%${tag}%`, postsPerPage, offset], (err: any, results: any) => {
         if (err) {
           reject(err);
         } else {

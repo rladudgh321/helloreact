@@ -4,7 +4,7 @@ import axios from 'axios';
 
 axios.defaults.baseURL = backUrl;
 
-export async function getPostsAPI(page: number, postsPerPage: number) {
+export async function getPostsAPI(page: number, postsPerPage: number, tag: string) {
   try {
     console.log('getPostsAPI');
     console.log('node_env', process.env.NODE_ENV);
@@ -14,6 +14,7 @@ export async function getPostsAPI(page: number, postsPerPage: number) {
       params: {
         page,
         postsPerPage,
+        tag, // tag 추가
       },
     });
     return response.data;

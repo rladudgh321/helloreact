@@ -16,12 +16,14 @@ export default function PostTable({
   initialPosts,
   postsPerPage,
   currentPage,
-  totalPages
+  totalPages,
+  tag,
 }: {
   initialPosts: DataProps[];
   postsPerPage: number;
   currentPage: number;
   totalPages: number;
+  tag: string; // tag 파라미터 추가
 }) {
   console.log('initialPosts', initialPosts);
   const stringToArray: StringToArrayProps[] = initialPosts.map((item: DataProps) => ({
@@ -52,7 +54,7 @@ export default function PostTable({
               </td>
               <td className="py-2 px-4">
                 {post.tags.map((tag, idx) => (
-                  <Link key={idx} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2" href={`/?tag=${tag}`}>
+                  <Link key={idx} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2" href={`/?tag=${tag}&page=${currentPage}`}>
                     {tag}
                   </Link>
                 ))}
@@ -68,7 +70,7 @@ export default function PostTable({
         {currentPage > 1 && (
           <button
             className="px-4 py-2 border rounded-md mx-2 bg-gray-200 hover:bg-gray-300"
-            onClick={() => window.location.search = `?page=${currentPage - 1}`}
+            onClick={() => window.location.search = `?page=${currentPage - 1}&tag=${tag}`}
           >
             이전
           </button>
@@ -77,10 +79,8 @@ export default function PostTable({
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index}
-            className={`px-4 py-2 border rounded-md mx-2 ${
-              currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-            onClick={() => window.location.search = `?page=${index + 1}`}
+            className={`px-4 py-2 border rounded-md mx-2 ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            onClick={() => window.location.search = `?page=${index + 1}&tag=${tag}`}
           >
             {index + 1}
           </button>
@@ -89,7 +89,7 @@ export default function PostTable({
         {currentPage < totalPages && (
           <button
             className="px-4 py-2 border rounded-md mx-2 bg-gray-200 hover:bg-gray-300"
-            onClick={() => window.location.search = `?page=${currentPage + 1}`}
+            onClick={() => window.location.search = `?page=${currentPage + 1}&tag=${tag}`}
           >
             다음
           </button>
