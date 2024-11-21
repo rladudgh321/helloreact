@@ -23,7 +23,7 @@ export default function PostTable({
   currentPage: number;
   totalPages: number;
 }) {
-
+  console.log('initialPosts', initialPosts);
   const stringToArray: StringToArrayProps[] = initialPosts.map((item: DataProps) => ({
     ...item,
     images: item.images.split(','),
