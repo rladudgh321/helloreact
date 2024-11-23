@@ -6,7 +6,7 @@ interface PostContentProps {
 }
 
 export default function PostContent({ post }: PostContentProps) {
-  console.log('post length', post.images);
+  console.log('postpostpost', post);
   return (
     <div>
       {/* 게시글 제목 */}

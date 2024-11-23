@@ -1,9 +1,8 @@
 "use client"
 
-// app/components/PostTable.tsx
 import { useState } from 'react';
 import Link from 'next/link';
-import { DataProps, StringToArrayProps, StringToArrayPropsWithoutImages } from '../types';
+import { DataProps, StringToArrayPropsWithoutImages } from '../types';
 
 function formatDate(date: Date) {
   const year = date.getFullYear();
@@ -23,16 +22,19 @@ export default function PostTable({
   postsPerPage: number;
   currentPage: number;
   totalPages: number;
-  tag: string; // tag 파라미터 추가
+  tag: string;
 }) {
   const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map((item: DataProps) => {
-    console.log('item.tags', item)
     return  ({
       ...item,
       tags: item.tags.split(','),
-    })
+    });
   });
 
+  // 태그 클릭 시 해당 태그로 필터링된 게시글을 보기 위해 URL 변경
+  const handleTagClick = (tag: string) => {
+    window.location.search = `?tag=${tag}&page=${currentPage}`;
+  };
 
   return (
     <div>
@@ -50,15 +52,22 @@ export default function PostTable({
             <tr key={post.id} className="border-b hover:bg-gray-50">
               <td className="py-2 px-4">{index + 1 + (currentPage - 1) * postsPerPage}</td>
               <td className="py-2 px-4">
-                <Link href={`/post/${post.id}?page=${currentPage}`} className="text-blue-600 hover:text-blue-800">
+                <Link
+                    href={`/post/${Number(post.id) - 1}?page=${currentPage}${tag ? `&tag=${tag}` : ''}`}  // tag가 있으면 쿼리 문자열에 포함
+                    className="text-blue-600 hover:text-blue-800"
+                  >
                   {post.title}
                 </Link>
               </td>
               <td className="py-2 px-4">
                 {post.tags.map((tag, idx) => (
-                  <Link key={idx} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2" href={`/?tag=${tag}&page=${currentPage}`}>
+                  <button
+                    key={idx}
+                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2"
+                    onClick={() => handleTagClick(tag)}
+                  >
                     {tag}
-                  </Link>
+                  </button>
                 ))}
               </td>
               <td className="py-2 px-4">{formatDate(new Date(post.date))}</td>
