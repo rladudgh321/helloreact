@@ -4,7 +4,7 @@ import axios from 'axios';
 
 axios.defaults.baseURL = backUrl;
 
-export async function getPostsAPI(page: number, postsPerPage: number, tag: string) {
+export async function getPostsAPI(page: number, postsPerPage: number, tag?: string) {
   try {
     console.log('getPostsAPI');
     console.log('node_env', process.env.NODE_ENV);

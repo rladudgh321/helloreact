@@ -3,7 +3,7 @@
 // app/components/PostTable.tsx
 import { useState } from 'react';
 import Link from 'next/link';
-import { DataProps, StringToArrayProps } from '../types';
+import { DataProps, StringToArrayProps, StringToArrayPropsWithoutImages } from '../types';
 
 function formatDate(date: Date) {
   const year = date.getFullYear();
@@ -25,12 +25,14 @@ export default function PostTable({
   totalPages: number;
   tag: string; // tag 파라미터 추가
 }) {
-  console.log('initialPosts', initialPosts);
-  const stringToArray: StringToArrayProps[] = initialPosts.map((item: DataProps) => ({
-    ...item,
-    images: item.images.split(','),
-    tags: item.tags.split(','),
-  }));
+  const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map((item: DataProps) => {
+    console.log('item.tags', item)
+    return  ({
+      ...item,
+      tags: item.tags.split(','),
+    })
+  });
+
 
   return (
     <div>

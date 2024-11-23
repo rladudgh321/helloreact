@@ -7,7 +7,7 @@ import { getPostsAPI } from "../../api/post";
 import PostList from "../../components/PostList";
 
 export interface PostListProps {
-  searchParams?: { postsPerPage?: string; page?: string };
+  searchParams?: { postsPerPage?: string; page?: string; tag?: string; };
 }
 
 interface PostProps extends PostListProps {
@@ -46,7 +46,7 @@ export default async function Post({ params, searchParams }: PostProps) {
 export async function generateStaticParams({ searchParams }: PostListProps) {
   // API 호출하여 게시글 목록 가져오기
   const postsPerPage = searchParams?.postsPerPage ? parseInt(searchParams.postsPerPage) : 10; // 기본값 10
-  const posts = await getPostsAPI(1, postsPerPage);
+  const posts = await getPostsAPI(1, postsPerPage, '');
 
   // 각 게시글의 ID를 기반으로 동적 경로를 생성
   return posts.posts.map((post: DataProps) => ({

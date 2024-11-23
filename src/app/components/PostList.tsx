@@ -8,7 +8,7 @@ interface PostListProps {
 
 export default async function PostList({ searchParams }: PostListProps) {
   const currentPage = searchParams?.page ? parseInt(searchParams.page) : 1;
-  const postsPerPage = searchParams?.postsPerPage ? parseInt(searchParams.postsPerPage) : 2; // 기본값 10
+  const postsPerPage = searchParams?.postsPerPage ? parseInt(searchParams.postsPerPage) : 10; // 기본값 10
   const tag = searchParams?.tag || ''; // 태그 파라미터 처리
 
   // API 호출: 전체 게시물 수와 첫 페이지 데이터를 가져옵니다.

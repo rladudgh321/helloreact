@@ -10,3 +10,7 @@ export interface StringToArrayProps extends Omit<DataProps, 'images' | 'tags'> {
   images: string[];
   tags: string[];
 }
+
+export interface StringToArrayPropsWithoutImages extends Omit<DataProps, 'images' | 'tags'> {
+  tags: string[];
+}

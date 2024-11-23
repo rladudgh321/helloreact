@@ -6,6 +6,7 @@ interface PostContentProps {
 }
 
 export default function PostContent({ post }: PostContentProps) {
+  console.log('post length', post.images);
   return (
     <div>
       {/* 게시글 제목 */}
@@ -25,9 +26,10 @@ export default function PostContent({ post }: PostContentProps) {
       {/* 게시글 이미지들 */}
       <div className="space-y-8">
         {post.images.map((image: string, idx: number) => (
-          <div key={idx} className="bg-gray-200 rounded-lg overflow-hidden shadow-md mb-6">
-            <img
-              className="w-full h-96 object-cover"
+          <div key={idx} className="bg-gray-200 rounded-lg shadow-md mb-6">
+            <img 
+              referrerPolicy="no-referrer"
+              className="w-full"
               src={image}
               alt={`image${idx}`}
             />

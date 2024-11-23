@@ -31,15 +31,14 @@ export const GET = async (req: Request) => {
         p.id AS id, 
         p.title, 
         p.createdAt AS date, 
-        GROUP_CONCAT(DISTINCT t.name) AS tags,
-        GROUP_CONCAT(DISTINCT i.src) AS images
-      FROM posts p
-      LEFT JOIN post_tags pt ON p.id = pt.post_id
-      LEFT JOIN tags t ON pt.tag_id = t.id
-      LEFT JOIN images i ON p.id = i.postId
-      WHERE ? = '' OR t.name LIKE ?
-      GROUP BY p.id
-      LIMIT ? OFFSET ?
+        GROUP_CONCAT(DISTINCT t.name) AS tags
+FROM posts p
+LEFT JOIN post_tags pt ON p.id = pt.post_id
+LEFT JOIN tags t ON pt.tag_id = t.id
+WHERE ? = '' OR t.name LIKE ?
+GROUP BY p.id
+LIMIT ? OFFSET ?
+
     `;
 
     const rows = await new Promise<any>((resolve, reject) => {
@@ -51,7 +50,7 @@ export const GET = async (req: Request) => {
         }
       });
     });
-
+    console.log('rowsrowsrows', rows);
     return Response.json({ totalCount, posts: rows });
   } catch (error) {
     console.error('500 err', error);
