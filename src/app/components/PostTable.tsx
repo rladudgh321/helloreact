@@ -50,6 +50,19 @@ export default function PostTable({
     );
   };
 
+  // 페이지네이션 번호 범위 계산 (예: 1~10, 11~20 등)
+  const getPaginationRange = (currentPage: number, totalPages: number) => {
+    const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+    const endPage = Math.min(startPage + 9, totalPages); // 최대 10개 페이지 번호 표시
+    const range = [];
+    for (let i = startPage; i <= endPage; i++) {
+      range.push(i);
+    }
+    return range;
+  };
+
+  const paginationRange = getPaginationRange(currentPage, totalPages);
+
   return (
     <div>
       <table className="w-full border-collapse table-auto">
@@ -68,13 +81,13 @@ export default function PostTable({
                 {index + 1 + (currentPage - 1) * postsPerPage}
               </td>
               <td className="py-2 px-4">
-              <Link
+                <Link
                   href={`/post/${Number(post.id) - 1}?page=${currentPage}${tag ? `&tag=${tag}` : ""}`}
                   className="text-blue-600 hover:text-blue-800"
                   scroll={false} // 스크롤 이동 비활성화
                 >
                   {post.title}
-              </Link>
+                </Link>
               </td>
               <td className="py-2 px-4">
                 {post.tags.map((tag, idx) => (
@@ -104,17 +117,18 @@ export default function PostTable({
           </button>
         )}
 
-        {Array.from({ length: totalPages }, (_, index) => (
+        {/* 페이지 번호 */}
+        {paginationRange.map((page) => (
           <button
-            key={index}
+            key={page}
             className={`px-4 py-2 border rounded-md mx-2 ${
-              currentPage === index + 1
+              currentPage === page
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 hover:bg-gray-300"
             }`}
-            onClick={() => handlePageChange(index + 1)}
+            onClick={() => handlePageChange(page)}
           >
-            {index + 1}
+            {page}
           </button>
         ))}
 
