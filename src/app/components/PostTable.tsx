@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DataProps, StringToArrayPropsWithoutImages } from "../types";
 import Link from "next/link";
 
@@ -26,6 +26,8 @@ export default function PostTable({
   tag: string;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map(
     (item: DataProps) => ({
       ...item,
@@ -44,11 +46,20 @@ export default function PostTable({
 
   // 태그 클릭 시 해당 태그로 필터링된 게시글을 보기 위해 URL 변경
   const handleTagClick = (tag: string) => {
+    // 페이지는 1페이지부터 시작하도록 처리
     router.push(
-      `?tag=${tag}&page=${currentPage}`,
+      `?tag=${tag}&page=1`,
       { scroll: false } // 스크롤 이동 비활성화
     );
   };
+
+  // useEffect로 tag가 변경될 때 페이지 갱신 (클릭된 tag에 맞는 페이지로 이동)
+  useEffect(() => {
+    if (tag) {
+      // tag가 변경되면 페이지를 1로 리셋
+      router.push(`?tag=${tag}&page=1`, { scroll: false });
+    }
+  }, [tag, router]); // tag 또는 router가 변경될 때마다 실행
 
   // 페이지네이션 번호 범위 계산 (예: 1~10, 11~20 등)
   const getPaginationRange = (currentPage: number, totalPages: number) => {
@@ -84,7 +95,7 @@ export default function PostTable({
                 <Link
                   href={`/post/${Number(post.id) - 1}?page=${currentPage}${tag ? `&tag=${tag}` : ""}`}
                   className="text-blue-600 hover:text-blue-800"
-                  scroll={false} // 스크롤 이동 비활성화
+                  scroll={true} // 스크롤 이동 비활성화
                 >
                   {post.title}
                 </Link>

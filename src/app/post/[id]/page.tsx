@@ -27,6 +27,8 @@ export default async function Post({ params, searchParams }: PostProps) {
   }
 
 
+  console.log('datadata11',data);
+
   // 데이터 가공: 이미지와 태그를 배열로 변환
   const stringToArraytoObject: StringToArrayProps = data.posts.map((item: DataProps) => ({
     ...item,
@@ -35,7 +37,7 @@ export default async function Post({ params, searchParams }: PostProps) {
   }))[Number(params.id)];
 
 
-  console.log('stringToArraytoObject',stringToArraytoObject);
+  console.log('stringToArraytoObjectstringToArraytoObject',stringToArraytoObject);
 
   // 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달
   return (
