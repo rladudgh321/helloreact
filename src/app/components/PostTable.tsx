@@ -1,13 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { DataProps, StringToArrayPropsWithoutImages } from '../types';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { DataProps, StringToArrayPropsWithoutImages } from "../types";
+import Link from "next/link";
 
 function formatDate(date: Date) {
   const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
   return `${year}.${month}.${day}.`;
 }
 
@@ -24,16 +25,29 @@ export default function PostTable({
   totalPages: number;
   tag: string;
 }) {
-  const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map((item: DataProps) => {
-    return  ({
+  const router = useRouter();
+  const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map(
+    (item: DataProps) => ({
       ...item,
-      tags: item.tags.split(','),
-    });
-  });
+      tags: item.tags.split(","),
+    })
+  );
+
+  // 페이지 이동 함수
+  const handlePageChange = (page: number) => {
+    // scroll: false 를 설정하여 스크롤이 최상단으로 이동하지 않도록 함
+    router.push(
+      `?page=${page}${tag ? `&tag=${tag}` : ""}`,
+      { scroll: false } // 스크롤 이동 비활성화
+    );
+  };
 
   // 태그 클릭 시 해당 태그로 필터링된 게시글을 보기 위해 URL 변경
   const handleTagClick = (tag: string) => {
-    window.location.search = `?tag=${tag}&page=${currentPage}`;
+    router.push(
+      `?tag=${tag}&page=${currentPage}`,
+      { scroll: false } // 스크롤 이동 비활성화
+    );
   };
 
   return (
@@ -50,14 +64,17 @@ export default function PostTable({
         <tbody>
           {stringToArray.map((post, index) => (
             <tr key={post.id} className="border-b hover:bg-gray-50">
-              <td className="py-2 px-4">{index + 1 + (currentPage - 1) * postsPerPage}</td>
               <td className="py-2 px-4">
-                <Link
-                    href={`/post/${Number(post.id) - 1}?page=${currentPage}${tag ? `&tag=${tag}` : ''}`}  // tag가 있으면 쿼리 문자열에 포함
-                    className="text-blue-600 hover:text-blue-800"
-                  >
+                {index + 1 + (currentPage - 1) * postsPerPage}
+              </td>
+              <td className="py-2 px-4">
+              <Link
+                  href={`/post/${Number(post.id) - 1}?page=${currentPage}${tag ? `&tag=${tag}` : ""}`}
+                  className="text-blue-600 hover:text-blue-800"
+                  scroll={false} // 스크롤 이동 비활성화
+                >
                   {post.title}
-                </Link>
+              </Link>
               </td>
               <td className="py-2 px-4">
                 {post.tags.map((tag, idx) => (
@@ -81,7 +98,7 @@ export default function PostTable({
         {currentPage > 1 && (
           <button
             className="px-4 py-2 border rounded-md mx-2 bg-gray-200 hover:bg-gray-300"
-            onClick={() => window.location.search = `?page=${currentPage - 1}&tag=${tag}`}
+            onClick={() => handlePageChange(currentPage - 1)}
           >
             이전
           </button>
@@ -90,8 +107,12 @@ export default function PostTable({
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index}
-            className={`px-4 py-2 border rounded-md mx-2 ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-            onClick={() => window.location.search = `?page=${index + 1}&tag=${tag}`}
+            className={`px-4 py-2 border rounded-md mx-2 ${
+              currentPage === index + 1
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+            onClick={() => handlePageChange(index + 1)}
           >
             {index + 1}
           </button>
@@ -100,7 +121,7 @@ export default function PostTable({
         {currentPage < totalPages && (
           <button
             className="px-4 py-2 border rounded-md mx-2 bg-gray-200 hover:bg-gray-300"
-            onClick={() => window.location.search = `?page=${currentPage + 1}&tag=${tag}`}
+            onClick={() => handlePageChange(currentPage + 1)}
           >
             다음
           </button>
