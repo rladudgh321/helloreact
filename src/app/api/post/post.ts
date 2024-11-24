@@ -5,13 +5,13 @@ import axios from 'axios';
 axios.defaults.baseURL = backUrl;
 
 export async function getPostAPI(id: number) {
+  console.log('dddddddddddddddddddd', id);
   try {
-    const response = await axios.get(`/api/post`, { // /api/post?id=1
-      params: { id: Number(id) }, // API 요청에 id를 쿼리 파라미터로 전달
-    });
+    const response = await axios.get(`/api/post/${id}`);
+    console.log('responseresponse', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('findOne Error fetching data:', error);
     return null; // 데이터가 없으면 null 반환
   }
 }

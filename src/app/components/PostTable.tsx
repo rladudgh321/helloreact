@@ -93,7 +93,7 @@ export default function PostTable({
               </td>
               <td className="py-2 px-4">
                 <Link
-                  href={`/post/${Number(post.id) - 1}?page=${currentPage}${tag ? `&tag=${tag}` : ""}`}
+                  href={`/post/${Number(post.id)}?page=${currentPage}${tag ? `&tag=${tag}` : ""}`}
                   className="text-blue-600 hover:text-blue-800"
                   scroll={true} // 스크롤 이동 비활성화
                 >

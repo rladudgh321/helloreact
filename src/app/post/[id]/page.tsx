@@ -3,8 +3,8 @@ import { notFound } from "next/navigation"; // 404 페이지를 위한 Next.js �
 import { getPostAPI } from "../../api/post/post"; // API 함수 임포트
 import PostContent from "../../components/PostContent"; // 자식 컴포넌트 임포트
 import { DataProps, StringToArrayProps } from "../../types";
-import { getPostsAPI } from "../../api/post";
 import PostList from "../../components/PostList";
+import { getPostsAllAPI } from "../../api/all/post";
 
 export interface PostListProps {
   searchParams?: { postsPerPage?: string; page?: string; tag?: string; };
@@ -26,18 +26,7 @@ export default async function Post({ params, searchParams }: PostProps) {
     notFound();
   }
 
-
-  console.log('datadata11',data);
-
-  // 데이터 가공: 이미지와 태그를 배열로 변환
-  const stringToArraytoObject: StringToArrayProps = data.posts.map((item: DataProps) => ({
-    ...item,
-    images: item.images.split(','),
-    tags: item.tags.split(','),
-  }))[Number(params.id)];
-
-
-  console.log('stringToArraytoObjectstringToArraytoObject',stringToArraytoObject);
+  const stringToArraytoObject = { ...data, images: data.images.split(','), tags: data.tags.split(',') }
 
   // 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달
   return (
@@ -49,13 +38,15 @@ export default async function Post({ params, searchParams }: PostProps) {
   );
 }
 
-export async function generateStaticParams({ searchParams }: PostListProps) {
+export async function generateStaticParams() {
   // API 호출하여 게시글 목록 가져오기
-  const postsPerPage = searchParams?.postsPerPage ? parseInt(searchParams.postsPerPage) : 10; // 기본값 10
-  const posts = await getPostsAPI(1, postsPerPage, '');
-
-  // 각 게시글의 ID를 기반으로 동적 경로를 생성
-  return posts.posts.map((post: DataProps) => ({
+  const posts = await getPostsAllAPI();
+  const result = posts.posts.map((post: DataProps) => ({
     id: post.id.toString(), // 동적 경로에서 사용되는 파라미터
   }));
+
+  // 각 게시글의 ID를 기반으로 동적 경로를 생성
+  return result;
 }
+
+export const revalidate = 86400;
