@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation"; // 404 페이지를 위한 Next.js 내장 함수
 import { getPostAPI } from "../../api/post/post"; // API 함수 임포트
 import PostContent from "../../components/PostContent"; // 자식 컴포넌트 임포트
-import { DataProps, StringToArrayProps } from "../../types";
+import { DataProps } from "../../types";
 import PostList from "../../components/PostList";
 import { getPostsAllAPI } from "../../api/all/post";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { DataProps, StringToArrayPropsWithoutImages } from "../types";
 import Link from "next/link";
 
@@ -26,8 +26,6 @@ export default function PostTable({
   tag: string;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  
   const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map(
     (item: DataProps) => ({
       ...item,

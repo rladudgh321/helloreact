@@ -6,8 +6,9 @@
     "dev": "cross-env NODE_ENV=development next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prisma": "yarn pnpify prisma generate"
+    "prisma": "yarn pnpify prisma generate",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@tanstack/react-query": "^5.60.5",

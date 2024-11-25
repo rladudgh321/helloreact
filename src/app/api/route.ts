@@ -50,7 +50,6 @@ LIMIT ? OFFSET ?
         }
       });
     });
-    console.log('rowsrowsrows', rows);
     return Response.json({ totalCount, posts: rows });
   } catch (error) {
     console.error('500 err', error);

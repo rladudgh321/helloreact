@@ -16,8 +16,6 @@ export default async function PostList({ searchParams }: PostListProps) {
 
   const totalPages = Math.ceil(totalCount / postsPerPage); // 전체 페이지 수 계산
 
-  console.log('postpostpostsd', posts);
-
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">게시판</h1>

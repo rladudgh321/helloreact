@@ -1,7 +1,7 @@
 // api/post/route.ts
 import { connectToDatabase } from '../../lib';
 
-export const GET = async (req: Request) => {
+export const GET = async () => {
    const connection = await connectToDatabase();
 
   try {

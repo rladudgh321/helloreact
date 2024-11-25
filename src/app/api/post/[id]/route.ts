@@ -2,8 +2,6 @@ import { connectToDatabase } from "../../../lib";
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const postId = params.id; // URL 경로에서 id 값 추출
-  console.log("Requested post id:", postId); // 요청된 postId 확인
-
   const connection = await connectToDatabase();
 
   try {
@@ -37,9 +35,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       // 해당 post가 없는 경우 404 에러 반환
       return new Response("Post not found", { status: 404 });
     }
-
-    console.log('Fetched post data:', postData);
-
     return Response.json(postData[0]); // 첫 번째 게시물 데이터 반환
   } catch (error) {
     console.error("Error fetching post:", error);

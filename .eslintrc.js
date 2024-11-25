@@ -13,7 +13,6 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:storybook/recommended",
     "prettier",
   ],
   plugins: ["react", "@typescript-eslint", "react-hooks", "jsx-a11y"],
@@ -42,6 +41,9 @@ module.exports = {
   ],
   ignorePatterns: ["**/dist/**/*", ".eslintrc.js"],
   settings: {
+    "react": {
+      "version": "detect"
+    },
     "import/resolver": {
       typescript: {},
     },
