@@ -1,0 +1,13 @@
+GET https://lpzchbiargizxecuyrxh.supabase.co/api
+
+###
+
+GET https://lpzchbiargizxecuyrxh.supabase.co/api/post
+
+###
+
+GET https://lpzchbiargizxecuyrxh.supabase.co/api/all
+
+###
+
+GET https://lpzchbiargizxecuyrxh.supabase.co/api/post/1

@@ -1,27 +1,26 @@
 // api/post/route.ts
-import { connectToDatabase } from '../../lib';
+import { supabase } from '../../lib';
 
 export const GET = async () => {
-   const connection = await connectToDatabase();
-
   try {
-    // 1. 전체 게시물 수를 구하는 쿼리
-    const query = 'SELECT id from posts';
-    const queryResult = await new Promise<any>((resolve, reject) => {
-      connection.query(query, (err: any, results: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+    // Supabase에서 'posts' 테이블의 모든 게시물 ID를 가져옵니다.
+    const { data, error } = await supabase
+      .from('posts') // 'posts' 테이블에서 데이터를 가져옵니다.
+      .select('id'); // 'id' 컬럼만 선택합니다.
 
-    return Response.json({ posts: queryResult });
+    if (error) {
+      throw error;
+    }
+
+    // 결과가 정상적으로 반환되면 데이터 반환
+    return new Response(JSON.stringify({ posts: data }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('500 err', error);
     return new Response('Database connection error', { status: 500 });
-  } finally {
-    connection.end(); // 연결 종료
   }
 };
