@@ -2,9 +2,7 @@
 import { notFound } from "next/navigation"; // 404 페이지를 위한 Next.js 내장 함수
 import { getPostAPI } from "../../api/post/post"; // API 함수 임포트
 import PostContent from "../../components/PostContent"; // 자식 컴포넌트 임포트
-// import { DataProps } from "../../types";
 import PostList from "../../components/PostList";
-// import { getPostsAllAPI } from "../../api/all/post";
 
 export interface PostListProps {
   searchParams?: { postsPerPage?: string; page?: string; tag?: string; };
@@ -37,17 +35,5 @@ export default async function Post({ params, searchParams }: PostProps) {
     </div>
   );
 }
-
-// export async function generateStaticParams() {
-//   // API 호출하여 게시글 목록 가져오기
-//   const posts = await getPostsAllAPI();
-
-//   const result = posts.posts.map((post: DataProps) => ({
-//     id: post.id.toString(), // 동적 경로에서 사용되는 파라미터
-//   }));
-
-//   // 각 게시글의 ID를 기반으로 동적 경로를 생성
-//   return result;
-// }
 
 export const revalidate = 86400;
