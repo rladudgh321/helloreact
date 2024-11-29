@@ -43,6 +43,3 @@ next-env.d.ts
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-./README.md
-README.md

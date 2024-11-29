@@ -2,15 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DataProps, StringToArrayPropsWithoutImages } from "../types";
+import { StringToArrayPropsWithoutImages } from "../types";
 import Link from "next/link";
-
-function formatDate(date: Date) {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  return `${year}.${month}.${day}.`;
-}
 
 export default function PostTable({
   initialPosts,
@@ -19,20 +12,13 @@ export default function PostTable({
   totalPages,
   tag,
 }: {
-  initialPosts: DataProps[];
+  initialPosts: StringToArrayPropsWithoutImages[];
   postsPerPage: number;
   currentPage: number;
   totalPages: number;
   tag: string;
 }) {
   const router = useRouter();
-  const stringToArray: StringToArrayPropsWithoutImages[] = initialPosts.map(
-    (item: DataProps) => ({
-      ...item,
-      tags: item.tags.split(","),
-    })
-  );
-
   // 페이지 이동 함수
   const handlePageChange = (page: number) => {
     // scroll: false 를 설정하여 스크롤이 최상단으로 이동하지 않도록 함
@@ -80,11 +66,11 @@ export default function PostTable({
             <th className="py-2 px-4 border-b text-left">번호</th>
             <th className="py-2 px-4 border-b text-left">제목</th>
             <th className="py-2 px-4 border-b text-left">태그</th>
-            <th className="py-2 px-4 border-b text-left">날짜</th>
+            {/* <th className="py-2 px-4 border-b text-left">날짜</th> */}
           </tr>
         </thead>
         <tbody>
-          {stringToArray.map((post, index) => (
+          {initialPosts.map((post, index) => (
             <tr key={post.id} className="border-b hover:bg-gray-50">
               <td className="py-2 px-4">
                 {index + 1 + (currentPage - 1) * postsPerPage}
@@ -99,17 +85,17 @@ export default function PostTable({
                 </Link>
               </td>
               <td className="py-2 px-4">
-                {post.tags.map((tag, idx) => (
+                {post.tags.map((tag) => (
                   <button
-                    key={idx}
+                    key={tag.id}
                     className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs mr-2"
-                    onClick={() => handleTagClick(tag)}
+                    onClick={() => handleTagClick(tag.name)}
                   >
-                    {tag}
+                    {tag.name}
                   </button>
                 ))}
               </td>
-              <td className="py-2 px-4">{formatDate(new Date(post.date))}</td>
+              {/* <td className="py-2 px-4">{formatDate(new Date(post.date))}</td> */}
             </tr>
           ))}
         </tbody>

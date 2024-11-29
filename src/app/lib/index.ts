@@ -1,9 +1,17 @@
-// lib/supabaseClient.ts
-import { createClient } from '@supabase/supabase-js';
+import { PrismaClient } from '@prisma/client'
 
-// Supabase 프로젝트 URL과 API 키
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+const prismaClientSingleton = () => {
+  return new PrismaClient();
+};
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-console.log('supabasesupabase', supabase);
+type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientSingleton | undefined;
+};
+
+const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+
+export default prisma;
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

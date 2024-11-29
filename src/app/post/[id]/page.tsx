@@ -24,7 +24,9 @@ export default async function Post({ params, searchParams }: PostProps) {
     notFound();
   }
 
-  const stringToArraytoObject = { ...data, images: data.images.split(','), tags: data.tags.split(',') }
+  const stringToArraytoObject = { ...data }
+
+  console.log('stringToArraytoObject', stringToArraytoObject);
 
   // 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달
   return (
