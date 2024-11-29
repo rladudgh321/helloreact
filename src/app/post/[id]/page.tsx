@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"; // 404 페이지를 위한 Next.js �
 import { getPostAPI } from "../../api/post/post"; // API 함수 임포트
 import PostContent from "../../components/PostContent"; // 자식 컴포넌트 임포트
 import PostList from "../../components/PostList";
+import { getPostsAllAPI } from "../../api/all/post";
+import { StringToArrayProps } from "../../types";
 
 export interface PostListProps {
   searchParams?: { postsPerPage?: string; page?: string; tag?: string; };
@@ -24,18 +26,28 @@ export default async function Post({ params, searchParams }: PostProps) {
     notFound();
   }
 
-  const stringToArraytoObject = { ...data }
-
-  console.log('stringToArraytoObject', stringToArraytoObject);
-
   // 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달
   return (
     <div className="max-w-3xl mx-auto p-6">
       {/* 자식 컴포넌트에 데이터 전달 */}
-      <PostContent post={stringToArraytoObject} />
+      <PostContent post={data} />
       <PostList searchParams={searchParams} />
     </div>
   );
 }
 
-export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  // API 호출하여 게시글 목록 가져오기
+  const posts = await getPostsAllAPI();
+
+  const result = posts.posts.map((post: StringToArrayProps) => ({
+    id: post.id.toString(), // 동적 경로에서 사용되는 파라미터
+  }));
+
+  // 각 게시글의 ID를 기반으로 동적 경로를 생성
+  return result;
+}
+
+
+export const revalidate = 60;

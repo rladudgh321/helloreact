@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma';
 
 export const GET = async (req: Request) => {
-  console.log('GETGETGET Try')
   const prisma = new PrismaClient();
   const url = new URL(req.url);
   const page = Number(url.searchParams.get('page')) || 1;
@@ -71,7 +70,6 @@ export const GET = async (req: Request) => {
     console.error('500 err', error);
     return new Response('Database connection error', { status: 500 });
   } finally {
-    console.log('disconnect')
     await prisma.$disconnect(); // Prisma 연결 해제
   }
 };
