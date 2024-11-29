@@ -1,0 +1,13 @@
+GET http://127.0.0.1:3000/api
+
+###
+
+GET http://127.0.0.1:3000/api/post
+
+###
+
+GET http://127.0.0.1:3000/api/all
+
+###
+
+GET http://127.0.0.1:3000/api/post/1

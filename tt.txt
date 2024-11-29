@@ -1,0 +1,52 @@
+-- Tag 테이블 생성
+CREATE TABLE tags (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Post 테이블 생성
+CREATE TABLE posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Post와 Tag 사이의 다대다 관계를 위한 중간 테이블
+CREATE TABLE post_tags (
+    post_id INT,      -- 컬럼 이름을 post_id로 변경
+    tag_id INT,       -- 컬럼 이름을 tag_id로 변경
+    PRIMARY KEY (post_id, tag_id),
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);
+
+-- Image 테이블 생성
+CREATE TABLE images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    src VARCHAR(255) NOT NULL,
+    postId INT,      -- 컬럼 이름을 postId로 원래대로 수정
+    FOREIGN KEY (postId) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+
+
+
+
+
+
+
+---------
+# string값 기본 1024자를 늘리기
+
+작업 중에 group_concat을 활용하여 객체를 요소로 갖는 배열 형태를 반환하게끔 했는데 길이 제한 때문에 텍스트가 잘리는 이슈가 발생했다.
+구글링 해보니 group_concat은 1024 문자가 기본값이라고 한다.
+이 정도 길이는 택도 없었기 때문에 group_concat의 최대 길이를 변경했다.
+
+SET SESSION group_concat_max_len = 150000;
+SET GLOBAL group_concat_max_len = 150000;
+SHOW VARIABLES LIKE '%GROUP_CONCAT%'
+
+
+--
+lrSxorshRNqOlVzj
+photo
