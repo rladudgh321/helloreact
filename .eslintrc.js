@@ -14,6 +14,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "prettier",
+    "next/core-web-vitals"
   ],
   plugins: ["react", "@typescript-eslint", "react-hooks", "jsx-a11y"],
   rules: {
