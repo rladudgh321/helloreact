@@ -7,7 +7,7 @@ export const GoogleAdSense = () => {
   return (
     <Script
       async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${PID}`}
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${process.env.NODE_ENV === 'production'? process.env.PID : ''}`}
       crossOrigin="anonymous"
       strategy="lazyOnload"
     />
