@@ -5,7 +5,7 @@ import "./globals.css";
 import Nav from "./components/Nav";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
-import Head from 'next/head'
+import { GoogleAdSense } from "./components/Ads";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,9 +32,6 @@ export default function RootLayout({
   return (
 
     <html lang="en">
-      <Head>
-        <meta name="google-adsense-account" content="ca-pub-8907240576603717" />
-      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
       >
@@ -42,6 +39,7 @@ export default function RootLayout({
           <Suspense fallback="loading">
             <Nav />
             {children}
+            <GoogleAdSense />
           </Suspense>
         </QueryClientProvider>
       </body>
